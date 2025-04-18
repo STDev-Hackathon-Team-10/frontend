@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import Dictionary from "./pages/Dictionary/index.jsx";
 import Game from "./pages/Game/index.jsx";
 import AtomRenderer from "./components/Renderer";
+import Rank from "./pages/Rank/index.jsx";
+import Honor from "./pages/Honor/index.jsx";
 
 let router = createBrowserRouter([
   {
@@ -23,6 +25,14 @@ let router = createBrowserRouter([
       {
         path: "dictionary",
         Component: Dictionary,
+      },
+      {
+        path: "rank",
+        Component: Rank,
+      },
+      {
+        path: "honor",
+        Component: Honor,
       },
       {
         path: "test/renderer",

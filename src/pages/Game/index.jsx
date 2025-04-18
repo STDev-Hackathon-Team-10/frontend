@@ -7,6 +7,7 @@ import { coloredElements } from "./data/elements";
 import trash from "../../Asset/trash.svg";
 import CompoundModal from "./components/CompoundModal";
 import { useNavigate } from "react-router";
+import MixArea from "./components/MixArea";
 
 export default function Game() {
   const [selectedElements, setSelectedElements] = useState([]);
@@ -18,6 +19,8 @@ export default function Game() {
   const MAX_ELEMENTS = 90;
   const trashRef = useRef(null);
   const elementRefs = useRef({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [atomIndex, setAtomIndex] = useState(0);
 
   // 페이징 설정
   const itemsPerPage = 6;
@@ -133,13 +136,25 @@ export default function Game() {
             </div>
           </div>
         </div>
-        <PlayArea
+        {/* PlayArea를 MixArea로 변경 */}
+        {/* <PlayArea
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
           elementRefs={elementRefs}
           trashRef={trashRef}
           undoStack={undoStack}
           setUndoStack={setUndoStack}
+        /> */}
+        <MixArea
+          selectedElements={selectedElements}
+          setSelectedElements={setSelectedElements}
+          elementRefs={elementRefs}
+          trashRef={trashRef}
+          undoStack={undoStack}
+          setUndoStack={setUndoStack}
+          setFoundCompound={setFoundCompound}
+          setModalVisible={setModalVisible}
+          atomIndex={atomIndex}
         />
       </section>
 
@@ -153,13 +168,16 @@ export default function Game() {
       <ElementSlider
         page={page}
         totalPages={totalPages}
-        pagedElements={pagedElements}
+        pagedElements={coloredElements}
         goPrev={goPrev}
         goNext={goNext}
         goToPage={goToPage}
         onElementClick={(el) => handleElementAdd(el)}
         showArrows={showArrows}
         setShowArrows={setShowArrows}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        setAtomIndex={setAtomIndex}
       />
     </div>
   );

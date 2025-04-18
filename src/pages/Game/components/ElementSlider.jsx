@@ -11,6 +11,9 @@ export default function ElementSlider({
   onElementClick,
   showArrows,
   setShowArrows,
+  modalVisible,
+  setModalVisible,
+  setAtomIndex,
 }) {
   return (
     <section
@@ -45,23 +48,22 @@ export default function ElementSlider({
               );
             }}
           >
-              {symbol}
+            {symbol}
           </div>
         ))}
       </div>
-
-      <div className={styles.pageIndicator}>
+      {/* <div className={styles.pageIndicator}>
         {Array.from({ length: totalPages }).map((_, i) => (
           <span
             key={i}
             className={`${styles.dot} ${i === page ? styles.activeDot : ""}`}
-            onClick={() => goToPage(i)} 
-      style={{ cursor: "pointer" }}
+            onClick={() => goToPage(i)}
+            style={{ cursor: "pointer" }}
           >
             ●
           </span>
         ))}
-      </div>
+      </div> */}
     </section>
   );
 }

@@ -39,8 +39,8 @@ export default function Header() {
         <div className={styles.tooltipWrapper} data-tooltip="칭호">
           <img
             src={medal}
-            alt="메달 버튼"
-            onClick={() => navigate("/medal")}
+            alt="칭호 버튼"
+            onClick={() => navigate("/honor")}
             className={styles.headerButton}
           />
         </div>

@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  max-height: 100%;
   background-color: #f0f0f0;
 }
 
@@ -20,6 +21,17 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+.mixContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 100%;
+  gap: 10px;
 }
 
 .controls {
@@ -79,17 +91,23 @@
 /* 원소 선택지 부분 */
 .sliderSection {
   background-color: #f9fafb;
-  padding: 20px 0;
+  padding-top: 20px;
   position: relative;
+  max-height: 30%;
 }
 
 .sliderContainer {
   display: flex;
-  overflow-x: hidden;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-height: 100%;
+  overflow: hidden;
+  overflow-y: auto;
+  width: 100%;
   gap: 16px;
   scroll-snap-type: x mandatory;
-  padding: 0 40px;
-  justify-content: center;
+  padding: 0 20px;
+  justify-content: space-between;
 }
 
 .sliderControls {
@@ -119,6 +137,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  display: none;
 }
 
 .sliderArrow:hover {
@@ -129,6 +149,7 @@
 .pageIndicator {
   display: flex;
   justify-content: center;
+  overflow-x: auto;
   gap: 6px;
   padding: 10px 0;
 }
@@ -147,6 +168,7 @@
 
 .elementCircle {
   width: 40px;
+  min-width: 40px;
   height: 40px;
   border-radius: 50%;
   font-size: 18px;
