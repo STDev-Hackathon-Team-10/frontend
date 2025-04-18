@@ -3,7 +3,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Home from "./pages/Home";
-import Game from "./pages/Game/index.jsx";
+import Rank from "./pages/Rank/index.jsx";
 
 let router = createBrowserRouter([
   {
@@ -15,8 +15,8 @@ let router = createBrowserRouter([
         Component: Home,
       },
       {
-        path: "game",
-        Component: Game,
+        path: "rank",
+        Component: Rank,
       },
     ],
   },
