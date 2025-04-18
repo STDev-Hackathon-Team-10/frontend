@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "classnames": "^2.5.1",
+    "kekule": "^1.0.2",
+    "openchemlib": "^9.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.5.0"
