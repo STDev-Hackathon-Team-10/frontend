@@ -7,6 +7,7 @@
   height: 100vh;
   max-height: 100%;
   background-color: #f0f0f0;
+  user-select: none;
 }
 
 /* 실행화면 부분 */
@@ -44,7 +45,7 @@
 }
 
 .arrowBtn {
-  color: #7dd3fc; /* 민트 블루로 변경 */
+  color: #2887b3; /* 민트 블루로 변경 */
   font-size: 30px;
   background: none;
   border: none;
@@ -53,7 +54,7 @@
 }
 
 .arrowBtn:hover {
-  color: #38bdf8; /* 조금 더 쨍한 하늘색 */
+  color: #09adf3; /* 조금 더 쨍한 하늘색 */
   transform: scale(1.1);
   cursor: pointer;
 }
@@ -183,6 +184,7 @@
   cursor: pointer;
   user-select: none;
   margin: 0;
+  position: relative;
 }
 
 /* 혼합물 제작시 모달창 */
@@ -253,4 +255,16 @@
 
 .slimeEffect {
   animation: slimePop 0.4s ease;
+}
+
+.countBadge {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  background-color: #3b82f6; /* 진한 파랑 */
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
 }

@@ -8,6 +8,7 @@ import trash from "../../Asset/trash.svg";
 import CompoundModal from "./components/CompoundModal";
 import { useNavigate } from "react-router";
 import MixArea from "./components/MixArea";
+import { FaRedo, FaUndo } from "react-icons/fa";
 
 export default function Game() {
   const [selectedElements, setSelectedElements] = useState([]);
@@ -122,7 +123,7 @@ export default function Game() {
         <div className={styles.topBar}>
           <div className={styles.controls}>
             <div className={styles.arrowBtn} onClick={handleUndo}>
-              ◀
+              <FaUndo size={20} />
             </div>
             <img
               ref={trashRef}
@@ -132,7 +133,7 @@ export default function Game() {
               onClick={handleReset}
             />
             <div className={styles.arrowBtn} onClick={handleRedo}>
-              ▶
+              <FaRedo size={20} />
             </div>
           </div>
         </div>

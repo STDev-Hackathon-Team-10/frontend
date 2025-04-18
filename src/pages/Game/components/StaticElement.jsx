@@ -22,12 +22,13 @@ export default function StaticElement({
   useEffect(() => {
     if (el.animate) {
       const timer = setTimeout(() => {
-        const updated = [...selectedElements];
-        updated[idx] = {
-          ...updated[idx],
-          animate: false,
-        };
-        setSelectedElements(updated);
+        setSelectedElements((prev) => {
+          const newElements = [...prev];
+          const element = newElements[idx];
+          const newElement = { ...element, animate: false };
+          newElements[idx] = newElement;
+          return newElements;
+        });
       }, 400); // slimeEffect와 동일한 시간
 
       return () => clearTimeout(timer);
@@ -44,8 +45,10 @@ export default function StaticElement({
       onAnimationEnd={() => {
         el.animate = false;
       }}
+      onClick={() => {}}
     >
       {el.symbol}
+      {count > 1 && <div className={styles.countBadge}>{count}</div>}
     </div>
   );
 }
