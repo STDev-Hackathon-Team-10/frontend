@@ -7,6 +7,9 @@ export default function PlayArea({
   selectedElements,
   setSelectedElements,
   elementRefs,
+  trashRef,
+  undoStack,
+  setUndoStack,
 }) {
 
 
@@ -25,6 +28,10 @@ export default function PlayArea({
           elementRefs={elementRefs}
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
+
+          trashRef={trashRef}
+          undoStack={undoStack}
+          setUndoStack={setUndoStack}
         />
       ))}
     </div>

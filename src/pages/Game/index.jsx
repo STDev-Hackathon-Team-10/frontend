@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./Game.module.css";
 import Header from "./components/Header";
 import ElementSlider from "./components/ElementSlider";
@@ -16,9 +16,9 @@ export default function Game() {
   const [foundCompound, setFoundCompound] = useState(null);
   const navigate = useNavigate();
   const MAX_ELEMENTS = 90;
+  const trashRef = useRef(null);
+  const elementRefs = useRef({});
 
-  // 드래그 참조
-  const elementRefs = useRef([]);
 
   // 페이징 설정
   const itemsPerPage = 6;
@@ -123,6 +123,7 @@ export default function Game() {
               ◀
             </div>
             <img
+              ref={trashRef}
               src={trash}
               alt="쓰레기통"
               className={styles.trashBtn}
@@ -137,6 +138,9 @@ export default function Game() {
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
           elementRefs={elementRefs}
+          trashRef={trashRef}
+          undoStack={undoStack}
+          setUndoStack={setUndoStack}
         />
       </section>
 
