@@ -19,6 +19,7 @@ const ensureKekuleLoaded = () => {
 
 function KekuleViewer({
   chemObj,
+  formula = "",
   className = "chem-viewer",
   width = "100%",
   height = "400px",
@@ -52,6 +53,10 @@ function KekuleViewer({
         viewer.setAutoSize(false); // 자동 크기 조절 비활성화
         viewer.setDimension(width, height); // 크기 설정
         viewer.appendToElem(containerRef.current); // 참조된 div에 뷰어 추가
+        viewer.setEnableToolbar(false);
+        viewer.setAutofit(true);
+        viewer.setZoom(0.9);
+        viewer.setShowCaption(true);
         viewerRef.current = viewer; // 뷰어 인스턴스 저장
       }
 
@@ -64,6 +69,7 @@ function KekuleViewer({
           const molecule = Kekule.IO.loadFormatData(mol.toMolfile(), "mol");
           if (molecule) {
             viewerRef.current.setChemObj(molecule);
+            viewerRef.current.setCaption(formula);
             console.log("Molecule loaded successfully.");
           } else {
             console.error(`Failed to load molecule from data: ${chemObj}`);
