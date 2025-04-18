@@ -1,41 +1,68 @@
 /* 헤더 부분 */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2px 20px;
-    background-color: #ffffff;
-  }
-  
-  .leftButtons,
-  .rightButtons {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .center {
-    display: flex;
-    align-items: center;
-    justify-content: center; 
-    gap: 8px;
-    flex: 1; 
-    text-align: center;
-  }
-  
-  .homeButton {
-    width: 28px;
-    height: auto;
-    cursor: pointer;
-  }
-  
-  .headerButton {
-    width: 20px;
-    height: auto;
-    cursor: pointer;
-  }
-  
-  .title {
-    width: 100px;
-    height: auto;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 20px;
+  background-color: #ffffff;
+}
+
+.leftButtons,
+.rightButtons {
+  display: flex;
+  gap: 20px;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  text-align: center;
+}
+
+.homeButton {
+  width: 28px;
+  height: auto;
+  cursor: pointer;
+}
+
+.headerButton {
+  width: 20px;
+  height: auto;
+  cursor: pointer;
+}
+
+.title {
+  width: 100px;
+  height: auto;
+}
+
+/* 툴팁부분 */
+.tooltipWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltipWrapper::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 999;
+}
+
+.tooltipWrapper:hover::after {
+  opacity: 1;
+}
