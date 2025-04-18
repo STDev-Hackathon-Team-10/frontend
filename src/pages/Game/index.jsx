@@ -6,7 +6,7 @@ import PlayArea from "./components/PlayArea";
 import { coloredElements } from "./data/elements";
 import trash from "../../Asset/trash.svg";
 import CompoundModal from "./components/CompoundModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default function Game() {
   const [selectedElements, setSelectedElements] = useState([]);
@@ -18,8 +18,6 @@ export default function Game() {
   const MAX_ELEMENTS = 90;
   const trashRef = useRef(null);
   const elementRefs = useRef({});
-
-
 
   // 페이징 설정
   const itemsPerPage = 6;
