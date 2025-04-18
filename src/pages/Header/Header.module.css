@@ -1,0 +1,41 @@
+/* 헤더 부분 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 20px;
+    background-color: #ffffff;
+  }
+  
+  .leftButtons,
+  .rightButtons {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .center {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    gap: 8px;
+    flex: 1; 
+    text-align: center;
+  }
+  
+  .homeButton {
+    width: 28px;
+    height: auto;
+    cursor: pointer;
+  }
+  
+  .headerButton {
+    width: 20px;
+    height: auto;
+    cursor: pointer;
+  }
+  
+  .title {
+    width: 100px;
+    height: auto;
+  }
+  
