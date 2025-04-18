@@ -1,0 +1,74 @@
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+    flex-grow: 1; /* 남은 영역 모두 차지 */
+    padding: 20px;
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 전체 화면 */
+  }
+
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .titleList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .titleBox {
+    padding: 16px;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    transition: 0.3s;
+  }
+  
+  .titleBox:hover {
+    transform: scale(1.01);
+  }
+  
+  .titleName {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .description {
+    margin-top: 4px;
+    color: #555;
+  }
+  
+  .condition {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #888;
+  }
+  
+  .locked {
+    opacity: 0.5;
+    filter: grayscale(100%);
+  }
+  
+  .active {
+    border-color: #4caf50;
+    background-color: #e6ffe6;
+  }
+  
+  .activeTag {
+    color: #4caf50;
+    font-size: 14px;
+    margin-left: 6px;
+  }
+  
