@@ -1,9 +1,9 @@
-import styles from "./Header.module.css";
-import home from "../../Asset/home.svg";
-import trophy from "../../Asset/trophy.svg";
-import medal from "../../Asset/medal.svg";
-import back from "../../Asset/left_arrow.svg";
-import mini_logo from "../../Asset/mini_logo.svg";
+import styles from "../../Header/Header.module.css";
+import home from "../../../Asset/home.svg";
+import trophy from "../../../Asset/trophy.svg";
+import medal from "../../../Asset/medal.svg";
+import dictionary from "../../../Asset/dictionary.svg";
+import mini_logo from "../../../Asset/mini_logo.svg";
 
 import { useNavigate } from "react-router-dom";
 
@@ -21,11 +21,11 @@ export default function Header() {
             className={styles.homeButton}
           />
           </div>
-          <div className={styles.tooltipWrapper} data-tooltip="게임화면으로 이동">
+          <div className={styles.tooltipWrapper} data-tooltip="도감">
           <img
-            src={back}
-            alt="게임버튼"
-            onClick={() => navigate("/game")}
+            src={dictionary}
+            alt="도감버튼"
+            onClick={() => navigate("/dictionary")}
             className={styles.homeButton}
           />
           </div>
@@ -39,8 +39,8 @@ export default function Header() {
         <div className={styles.tooltipWrapper} data-tooltip="칭호">
           <img
             src={medal}
-            alt="메달 버튼"
-            onClick={() => navigate("/medal")}
+            alt="칭호 버튼"
+            onClick={() => navigate("/honor")}
             className={styles.headerButton}
           />
           </div>

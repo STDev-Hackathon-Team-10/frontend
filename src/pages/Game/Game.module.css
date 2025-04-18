@@ -1,0 +1,234 @@
+/* Game.module.css */
+
+/* 화면 기본설정 */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+/* 실행화면 부분 */
+.playScreen {
+  height: 100%; /* flex: 1 제거 */
+  max-height: calc(100vh - 160px);
+  position: relative;
+  background-color: #f0f4f8;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.08);
+  padding: 5px 5px 40px 15px;
+  border: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.controls {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  gap: 15px;
+  z-index: 10;
+}
+
+.arrowBtn {
+  color: #7dd3fc; /* 민트 블루로 변경 */
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.arrowBtn:hover {
+  color: #38bdf8; /* 조금 더 쨍한 하늘색 */
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.trashBtn {
+  color: #111;
+  font-size: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.trashBtn:hover {
+  transform: rotate(10deg);
+}
+
+.selectedArea {
+  position: relative;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  min-height: 200px;
+  box-sizing: border-box;
+
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+
+/* 원소 선택지 부분 */
+.sliderSection {
+  background-color: #f9fafb;
+  padding: 20px 0;
+  position: relative;
+}
+
+.sliderContainer {
+  display: flex;
+  overflow-x: hidden;
+  gap: 16px;
+  scroll-snap-type: x mandatory;
+  padding: 0 40px;
+  justify-content: center;
+}
+
+.sliderControls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  height: 100%;
+  align-items: center;
+}
+
+.sliderArrow {
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #333;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sliderArrow:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.15);
+}
+
+.pageIndicator {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+}
+
+.dot {
+  font-size: 12px;
+  color: #cbd5e1; /* 연한 회색 */
+  transition: all 0.2s ease;
+}
+
+.activeDot {
+  color: #3b82f6; /* 진한 파랑 or 강조 컬러 */
+  font-weight: bold;
+  transform: scale(1.4);
+}
+
+.elementCircle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border: 2px solid black;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+}
+
+/* 혼합물 제작시 모달창 */
+
+.modalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(240, 240, 240, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.modalBox {
+  background-color: #f5edff;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.compoundText {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.moveBtn {
+  margin-top: 20px;
+  background-color: #d6bbfb;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.moveBtn:hover {
+  background-color: #c084fc;
+}
+
+/* 원소 띠어내는 애니메이션 */
+@keyframes slimePop {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  30% {
+    transform: scale(1.2, 0.8);
+    opacity: 0.8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  60% {
+    transform: scale(0.9, 1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.slimeEffect {
+  animation: slimePop 0.4s ease;
+}
