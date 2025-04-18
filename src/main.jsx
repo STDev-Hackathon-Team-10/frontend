@@ -3,6 +3,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Home from "./pages/Home";
+import Dictionary from "./pages/Dictionary/index.jsx";
 import Game from "./pages/Game/index.jsx";
 import AtomRenderer from "./components/Renderer";
 
@@ -18,6 +19,10 @@ let router = createBrowserRouter([
       {
         path: "game",
         Component: Game,
+      },
+      {
+        path: "dictionary",
+        Component: Dictionary,
       },
       {
         path: "test/renderer",
