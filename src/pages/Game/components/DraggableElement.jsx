@@ -14,10 +14,10 @@ export default function DraggableElement({
   setUndoStack,   
 
 }) {
-  if (!elementRefs.current[idx]) {
-    elementRefs.current[idx] = React.createRef();
+  if (!elementRefs.current[el.symbol]) {
+    elementRefs.current[el.symbol] = React.createRef();
   }
-  const nodeRef = elementRefs.current[idx];
+  const nodeRef = elementRefs.current[el.symbol];
 
   // 원소 드래그 할 때
   const handleStop = (e, data) => {
@@ -68,6 +68,7 @@ export default function DraggableElement({
       return () => clearTimeout(timer);
     }
   }, [el.animate]);
+  
 
   return (
     <Draggable key={idx} nodeRef={nodeRef} onStop={handleStop} bounds="parent">

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./Game.module.css";
 import Header from "./components/Header";
 import ElementSlider from "./components/ElementSlider";
@@ -18,6 +18,7 @@ export default function Game() {
   const MAX_ELEMENTS = 90;
   const trashRef = useRef(null);
   const elementRefs = useRef({});
+
 
 
   // 페이징 설정
