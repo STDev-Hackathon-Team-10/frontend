@@ -61,6 +61,7 @@ export default function Game() {
 
   // 화학식 검사 및 화합물 찾기
   useEffect(() => {
+    return;
     if (selectedElements.length > 0) {
       const formula = convertToFormula(selectedElements);
       checkFormula(formula);
@@ -174,6 +175,7 @@ export default function Game() {
           setSelectedElements={setPlayerElements}
           setUndoStack={() => {}}
         />
+        <span style={{ borderTop: "2px solid grey" }} />
         <MixArea
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
