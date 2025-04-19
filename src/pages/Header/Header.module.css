@@ -22,15 +22,9 @@
     text-align: center;
   }
   
-  .homeButton {
-    width: 28px;
-    height: auto;
-    cursor: pointer;
-    color: black; 
-  }
   
   .headerButton {
-    width: 20px;
+    width: 28px;
     height: auto;
     cursor: pointer;
   }

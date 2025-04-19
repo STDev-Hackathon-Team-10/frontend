@@ -6,6 +6,7 @@ import back from "../../Asset/left_arrow.svg";
 import mini_logo from "../../Asset/mini_logo.svg";
 import { IoStorefront, IoTrophySharp } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
+import { HiArrowUturnLeft } from "react-icons/hi2";
 
 import { useNavigate } from "react-router";
 
@@ -17,13 +18,12 @@ export default function Header() {
       <div className={styles.leftButtons}>
         <IoStorefront
           onClick={() => navigate("/store")}
-          className={styles.homeButton}
+          className={styles.headerButton}
         />
-        <img
-          src={back}
-          alt="도감버튼"
+
+        <HiArrowUturnLeft
           onClick={() => navigate("/game")}
-          className={styles.homeButton}
+          className={styles.headerButton}
         />
       </div>
 
