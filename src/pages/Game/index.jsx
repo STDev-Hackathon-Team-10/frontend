@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./Game.module.css";
 import Header from "./components/Header";
 import ElementSlider from "./components/ElementSlider";
@@ -9,6 +9,39 @@ import CompoundModal from "./components/CompoundModal";
 import { useNavigate } from "react-router";
 import MixArea from "./components/MixArea";
 import { FaRedo, FaUndo } from "react-icons/fa";
+import axios from "axios";
+
+const convertToFormula = (elements) => {
+  if (!elements || elements.length === 0) {
+    return "";
+  }
+
+  let formula = "";
+  let count = 0;
+  let lastSymbol = "";
+
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+
+    if (element.symbol === lastSymbol) {
+      count++;
+    } else {
+      if (lastSymbol !== "") {
+        formula += count > 1 ? count : "";
+      }
+      formula += element.symbol;
+      lastSymbol = element.symbol;
+      count = 1;
+    }
+
+    // 마지막 요소인 경우 남은 count를 formula에 추가
+    if (i === elements.length - 1) {
+      formula += count > 1 ? count : "";
+    }
+  }
+
+  return formula;
+};
 
 export default function Game() {
   const [selectedElements, setSelectedElements] = useState([]);
@@ -64,12 +97,7 @@ export default function Game() {
   };
 
   // 클릭하여 원소 추가
-  const handleElementAdd = (el) => {
-    if (selectedElements.length >= MAX_ELEMENTS) {
-      alert("최대 90개의 원소만 배치할 수 있습니다.");
-      return;
-    }
-
+  const handleElementAdd = async (el) => {
     const centerX = 150 + Math.random() * 200;
     const centerY = 100 + Math.random() * 200;
 
@@ -79,6 +107,28 @@ export default function Game() {
     ]);
 
     setUndoStack([]);
+
+    // let response = await axios.get(`${import.meta.env.VITE_API_URL}/collection/find/${}`)
+  };
+
+  useEffect(() => {
+    if (selectedElements.length === 0) return;
+    console.log(convertToFormula(selectedElements));
+    checkFormula(convertToFormula(selectedElements));
+  }, [selectedElements]);
+
+  const checkFormula = async (formula) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/collection/find/${formula}`
+      );
+      if (response.data) {
+        console.log(response.data);
+        setFoundCompound(response.data.data.chemicalNameKo);
+      }
+    } catch (e) {
+      console.error("Error fetching compound data:", e);
+    }
   };
 
   // 드래그하여 원소 추가

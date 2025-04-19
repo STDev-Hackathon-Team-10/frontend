@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.8.4",
     "classnames": "^2.5.1",
     "kekule": "^1.0.2",
     "openchemlib": "^9.0.0",
