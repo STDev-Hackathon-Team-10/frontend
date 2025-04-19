@@ -1,5 +1,7 @@
 .storeContainer {
-    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
     font-family: 'Pretendard', sans-serif;
   }
   
