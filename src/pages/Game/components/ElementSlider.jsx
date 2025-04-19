@@ -1,5 +1,5 @@
 import styles from "../Game.module.css";
-import { elementNames } from "../data/elements";
+import { elementNames } from "../../../data/elements";
 
 export default function ElementSlider({
   page,

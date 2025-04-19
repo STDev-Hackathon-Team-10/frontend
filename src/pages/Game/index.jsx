@@ -3,13 +3,15 @@ import styles from "./Game.module.css";
 import Header from "./components/Header";
 import ElementSlider from "./components/ElementSlider";
 import PlayArea from "./components/PlayArea";
-import { coloredElements } from "./data/elements";
+import { coloredElements } from "../../data/elements";
 import trash from "../../Asset/trash.svg";
 import CompoundModal from "./components/CompoundModal";
 import { useNavigate } from "react-router";
 import MixArea from "./components/MixArea";
 import { FaRedo, FaUndo } from "react-icons/fa";
 import axios from "axios";
+import { levels } from "../../data/levels";
+import { loadState } from "../../utils/storage";
 
 const convertToFormula = (elements) => {
   if (!elements || elements.length === 0) {
@@ -59,10 +61,18 @@ export default function Game() {
   // 페이징 설정
   const itemsPerPage = 6;
   const totalPages = Math.ceil(coloredElements.length / itemsPerPage);
-  const pagedElements = coloredElements.slice(
-    page * itemsPerPage,
-    (page + 1) * itemsPerPage
+  const levelIndex = loadState("level") ?? 0;
+  const pagedElements = coloredElements.filter((el) =>
+    levels.slice(levelIndex, levelIndex + 5).includes(el.symbol)
   );
+
+  useEffect(() => {
+    let state = loadState("uid");
+    if (!state) {
+      navigate("/");
+      return;
+    }
+  }, []);
 
   // 페이지 이동
   const goPrev = () => {
@@ -113,7 +123,6 @@ export default function Game() {
 
   useEffect(() => {
     if (selectedElements.length === 0) return;
-    console.log(convertToFormula(selectedElements));
     checkFormula(convertToFormula(selectedElements));
   }, [selectedElements]);
 
@@ -123,14 +132,16 @@ export default function Game() {
       return;
     }
     try {
+      let username = loadState("username");
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/chemical/formula/search?userId=4`,
+        `${import.meta.env.VITE_API_URL}/chemical/formula/search`,
         {
+          userName: username,
           formula,
         }
       );
-      if (response.data) {
-        console.log(response.data);
+      if (response.data?.data) {
+        if (response.data?.data?.success === false) return;
         setFoundCompound(response.data.data?.chemical?.chemicalNameKo);
       }
     } catch (e) {
@@ -222,7 +233,6 @@ export default function Game() {
         onMove={() => navigate("/dictionary")}
         onClose={() => {
           setFoundCompound(null);
-          setSelectedElements([]);
         }}
       />
 
@@ -230,7 +240,7 @@ export default function Game() {
       <ElementSlider
         page={page}
         totalPages={totalPages}
-        pagedElements={coloredElements}
+        pagedElements={pagedElements}
         goPrev={goPrev}
         goNext={goNext}
         goToPage={goToPage}
