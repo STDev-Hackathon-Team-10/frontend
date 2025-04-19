@@ -44,20 +44,13 @@ const convertToFormula = (elements) => {
 export default function Game() {
   // 상태 관리
   const [selectedElements, setSelectedElements] = useState([]);
+  const [playerElements, setPlayerElements] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
-  const [page, setPage] = useState(0);
-  const [showArrows, setShowArrows] = useState(false);
   const [foundCompound, setFoundCompound] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [atomIndex, setAtomIndex] = useState(0);
 
   // 상수 및 참조
   const navigate = useNavigate();
   const trashRef = useRef(null);
-  const elementRefs = useRef({});
-
-  const ELEMENT_LIMIT = 90;
-  const ITEMS_PER_PAGE = 6;
 
   // 레벨 기반 요소 필터링
   const levelIndex = loadState("level") ?? 0;
@@ -65,15 +58,6 @@ export default function Game() {
   const filteredElements = coloredElements.filter((el) =>
     availableLevels.includes(el.symbol)
   );
-  const totalPages = Math.ceil(filteredElements.length / ITEMS_PER_PAGE);
-
-  // 유저 인증 확인
-  useEffect(() => {
-    // const uid = loadState("uid");
-    // if (!uid) {
-    //   navigate("/");
-    // }
-  }, []);
 
   // 화학식 검사 및 화합물 찾기
   useEffect(() => {
@@ -106,19 +90,6 @@ export default function Game() {
     }
   };
 
-  // 페이지 네비게이션 핸들러
-  const handlePrevPage = () => {
-    setPage((prev) => (prev - 1 + totalPages) % totalPages);
-  };
-
-  const handleNextPage = () => {
-    setPage((prev) => (prev + 1) % totalPages);
-  };
-
-  const handleGoToPage = (pageIndex) => {
-    setPage(pageIndex);
-  };
-
   // 원소 조작 핸들러
   const handleElementAdd = (element) => {
     // 원소를 무작위 위치에 추가
@@ -132,18 +103,6 @@ export default function Game() {
 
     // 새 요소를 추가할 때 되돌리기 스택 초기화
     setUndoStack([]);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-
-    // 드롭된 위치 계산
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setSelectedElements((prev) => [...prev, { ...data, x, y, animate: true }]);
   };
 
   // Undo/Redo 기능
@@ -189,7 +148,6 @@ export default function Game() {
         id="playArea"
         className={styles.playScreen}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
       >
         {/* 제어 버튼 영역 */}
         <div className={styles.topBar}>
@@ -212,15 +170,14 @@ export default function Game() {
 
         {/* 원소 조합 영역 */}
         <MixArea
+          selectedElements={playerElements}
+          setSelectedElements={setPlayerElements}
+          setUndoStack={() => {}}
+        />
+        <MixArea
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
-          elementRefs={elementRefs}
-          trashRef={trashRef}
-          undoStack={undoStack}
           setUndoStack={setUndoStack}
-          setFoundCompound={setFoundCompound}
-          setModalVisible={setModalVisible}
-          atomIndex={atomIndex}
         />
       </section>
 
@@ -233,18 +190,8 @@ export default function Game() {
 
       {/* 원소 선택 슬라이더 */}
       <ElementSlider
-        page={page}
-        totalPages={totalPages}
-        pagedElements={filteredElements}
-        goPrev={handlePrevPage}
-        goNext={handleNextPage}
-        goToPage={handleGoToPage}
+        elements={filteredElements}
         onElementClick={handleElementAdd}
-        showArrows={showArrows}
-        setShowArrows={setShowArrows}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        setAtomIndex={setAtomIndex}
       />
     </div>
   );
