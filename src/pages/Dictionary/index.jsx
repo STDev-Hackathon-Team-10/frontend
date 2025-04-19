@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import styles from "./Dictionary.module.css";
 import CompoundModal from "./components/CompoudModal.jsx";
 import Header from "../Header";
+import axios from "axios"
+
+
 
 export default function Dictionary() {
   const [selectedCompound, setSelectedCompound] = useState(null);
@@ -12,12 +15,6 @@ export default function Dictionary() {
       description: "물",
       elements: ["H", "O", "O"],
       info: [
-        "이것은 물이다",
-        "이것은 물이다",
-        "이것은 물이다",
-        "이것은 물이다",
-        "이것은 물이다",
-        "이것은 물이다",
         "이것은 물이다",
         "이것은 물이다",
         "이것은 물이다",
