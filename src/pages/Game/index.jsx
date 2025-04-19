@@ -213,6 +213,7 @@ export default function Game() {
       <CompoundModal
         compound={foundCompound}
         onMove={() => navigate("/dictionary")}
+        onClose={() => setFoundCompound(null)}
       />
 
       {/* 원소 슬라이더 */}

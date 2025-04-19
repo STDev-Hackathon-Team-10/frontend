@@ -208,6 +208,7 @@
   border-radius: 16px;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
 .compoundText {
@@ -229,6 +230,17 @@
 
 .moveBtn:hover {
   background-color: #c084fc;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1;
 }
 
 /* 원소 띠어내는 애니메이션 */
