@@ -260,7 +260,6 @@ export const elementNames = {
   Og: "오가네손",
 };
 
-
 export const coloredElements = elements.map((symbol, index) => {
   const color = colors[index % colors.length];
   return { symbol, color };

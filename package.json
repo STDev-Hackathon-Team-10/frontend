@@ -10,13 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.8.4",
     "classnames": "^2.5.1",
     "kekule": "^1.0.2",
     "openchemlib": "^9.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-draggable": "^4.4.6",
-    "react-icon": "^1.0.0",
     "react-icons": "^5.5.0",
     "react-router": "^7.5.0"
   },

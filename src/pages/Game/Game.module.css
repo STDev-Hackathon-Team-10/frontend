@@ -5,7 +5,9 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  max-height: 100%;
   background-color: #f0f0f0;
+  user-select: none;
 }
 
 /* 실행화면 부분 */
@@ -22,6 +24,17 @@
   flex-direction: column;
 }
 
+.mixContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 100%;
+  gap: 10px;
+}
+
 .controls {
   position: absolute;
   bottom: 10px;
@@ -32,7 +45,7 @@
 }
 
 .arrowBtn {
-  color: #7dd3fc; /* 민트 블루로 변경 */
+  color: #2887b3; /* 민트 블루로 변경 */
   font-size: 30px;
   background: none;
   border: none;
@@ -41,7 +54,7 @@
 }
 
 .arrowBtn:hover {
-  color: #38bdf8; /* 조금 더 쨍한 하늘색 */
+  color: #09adf3; /* 조금 더 쨍한 하늘색 */
   transform: scale(1.1);
   cursor: pointer;
 }
@@ -79,17 +92,23 @@
 /* 원소 선택지 부분 */
 .sliderSection {
   background-color: #f9fafb;
-  padding: 20px 0;
+  padding-top: 20px;
   position: relative;
+  max-height: 30%;
 }
 
 .sliderContainer {
   display: flex;
-  overflow-x: hidden;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-height: 100%;
+  overflow: hidden;
+  overflow-y: auto;
+  width: 100%;
   gap: 16px;
   scroll-snap-type: x mandatory;
-  padding: 0 40px;
-  justify-content: center;
+  padding: 0 20px;
+  justify-content: space-between;
 }
 
 .sliderControls {
@@ -119,6 +138,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  display: none;
 }
 
 .sliderArrow:hover {
@@ -129,6 +150,7 @@
 .pageIndicator {
   display: flex;
   justify-content: center;
+  overflow-x: auto;
   gap: 6px;
   padding: 10px 0;
 }
@@ -147,6 +169,7 @@
 
 .elementCircle {
   width: 40px;
+  min-width: 40px;
   height: 40px;
   border-radius: 50%;
   font-size: 18px;
@@ -161,6 +184,7 @@
   cursor: pointer;
   user-select: none;
   margin: 0;
+  position: relative;
 }
 
 /* 혼합물 제작시 모달창 */
@@ -184,6 +208,7 @@
   border-radius: 16px;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
 .compoundText {
@@ -205,6 +230,17 @@
 
 .moveBtn:hover {
   background-color: #c084fc;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1;
 }
 
 /* 원소 띠어내는 애니메이션 */
@@ -231,4 +267,16 @@
 
 .slimeEffect {
   animation: slimePop 0.4s ease;
+}
+
+.countBadge {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  background-color: #3b82f6; /* 진한 파랑 */
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
 }
