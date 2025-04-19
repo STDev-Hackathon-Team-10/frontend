@@ -43,10 +43,28 @@
   text-align: center;
   height: 50px;
   line-height: 50px; /* 수직 정렬 */
-  font-size: 18px;
+  font-size: 20px;
   border-top: 1px solid #34495e;
   border-bottom: 1px solid #1a2530;
   letter-spacing: 0.5px;
+  transition: color 0.3s ease; /* 색상 변화 부드럽게 */
+}
+
+/* 10초 미만일 때 텍스트 색상 변화 애니메이션 */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.timerWarning {
+  animation: pulse 1s infinite;
 }
 
 /* 플레이어 2 부분 */
@@ -218,4 +236,54 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* 결과 모달 스타일 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 320px;
+  width: 80%;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.resultText {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  /* 승리와 패배에 따른 색상 변경은 인라인 스타일로 처리 가능 */
+}
+
+.homeButton {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.homeButton:hover {
+  background-color: #357abD;
 }
