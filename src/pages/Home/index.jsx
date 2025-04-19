@@ -29,6 +29,28 @@ export default function Home() {
     fetchGroups();
   }, []);
 
+  const start = async () => {
+    if (username.length < 1) {
+      alert("닉네임을 입력하세요.");
+      throw new Error("닉네임을 입력하세요.");
+    }
+    if (group.length < 1) {
+      alert("소속 그룹을 입력하세요.");
+      throw new Error("소속 그룹을 입력하세요.");
+    }
+    await axios.post(`${import.meta.env.VITE_API_URL}/user/register`, {
+      userName: username,
+      groupName: group,
+    });
+    let response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/user/getIdByUsername/${username}`
+    );
+    let userId = response.data.data;
+    saveState("uid", userId);
+    saveState("username", username);
+    saveState("group", group);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.logoBox}>
@@ -60,25 +82,7 @@ export default function Home() {
         <button
           className={styles.startbtn}
           onClick={async () => {
-            if (username.length < 1) {
-              alert("닉네임을 입력하세요.");
-              return;
-            }
-            if (group.length < 1) {
-              alert("소속 그룹을 입력하세요.");
-              return;
-            }
-            await axios.post(`${import.meta.env.VITE_API_URL}/user/register`, {
-              userName: username,
-              groupName: group,
-            });
-            let response = await axios.get(
-              `${import.meta.env.VITE_API_URL}/user/getIdByUsername/${username}`
-            );
-            let userId = response.data.data;
-            saveState("uid", userId);
-            saveState("username", username);
-            saveState("group", group);
+            await start();
             navigate("/game");
           }}
         >

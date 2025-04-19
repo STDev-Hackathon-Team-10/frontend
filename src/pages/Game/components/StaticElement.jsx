@@ -4,23 +4,24 @@ import styles from "../Game.module.css";
 import { useEffect } from "react";
 
 export default function StaticElement({
+  battle = false,
   el,
   idx,
   elementRefs,
-  selectedElements,
   setSelectedElements,
   count,
-  trashRef,
   setUndoStack,
 }) {
-  if (!elementRefs.current[el.symbol]) {
-    elementRefs.current[el.symbol] = React.createRef();
+  if (!battle) {
+    if (!elementRefs.current[el.symbol]) {
+      elementRefs.current[el.symbol] = React.createRef();
+    }
   }
-  const nodeRef = elementRefs.current[el.symbol];
+  const nodeRef = elementRefs?.current?.[el.symbol];
 
   // 원소 물방울 효과
   useEffect(() => {
-    if (el.animate) {
+    if (el.animate && !battle) {
       const timer = setTimeout(() => {
         setSelectedElements((prev) => {
           const newElements = [...prev];

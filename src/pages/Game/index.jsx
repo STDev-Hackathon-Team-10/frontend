@@ -2,16 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./Game.module.css";
 import Header from "./components/Header";
 import ElementSlider from "./components/ElementSlider";
-import PlayArea from "./components/PlayArea";
 import { coloredElements } from "../../data/elements";
 import trash from "../../Asset/trash.svg";
 import CompoundModal from "./components/CompoundModal";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import MixArea from "./components/MixArea";
 import { FaRedo, FaUndo } from "react-icons/fa";
 import axios from "axios";
 import { levels } from "../../data/levels";
 import { loadState } from "../../utils/storage";
+import { socket } from "../../utils/socket";
+import StaticElement from "./components/StaticElement";
 
 const convertToFormula = (elements) => {
   if (!elements || elements.length === 0) {
@@ -46,6 +47,7 @@ const convertToFormula = (elements) => {
 };
 
 export default function Game() {
+  const { roomId } = useParams();
   const [selectedElements, setSelectedElements] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [page, setPage] = useState(0);
@@ -68,7 +70,7 @@ export default function Game() {
 
   useEffect(() => {
     let state = loadState("uid");
-    if (!state) {
+    if (!state && !roomId) {
       navigate("/");
       return;
     }
@@ -110,7 +112,11 @@ export default function Game() {
   const handleElementAdd = async (el) => {
     const centerX = 150 + Math.random() * 200;
     const centerY = 100 + Math.random() * 200;
-
+    socket.emit("msg", {
+      type: "update",
+      roomId,
+      data: el,
+    });
     setSelectedElements((prev) => [
       ...prev,
       { ...el, x: centerX, y: centerY, animate: true },
@@ -174,12 +180,41 @@ export default function Game() {
     setPage(pageIndex);
   };
 
+  useEffect(() => {
+    const onMessage = (e) => {
+      console.log(e);
+      if (e.name === loadState("username")) return;
+      if (e.type === "update") {
+        setEnemySelectedElements((prev) => [
+          ...prev,
+          { ...e.data, animate: true },
+        ]);
+      }
+    };
+    socket.on("msg", onMessage);
+    socket.emit("join", {
+      roomId,
+      username: loadState("username"),
+    });
+    return () => {
+      socket.off("msg", onMessage);
+    };
+  }, []);
+
+  const [time, setTime] = useState(0);
+  const [status, setStatus] = useState("wait");
+  const [message, setMessage] = useState("");
+  const [enemySelectedElements, setEnemySelectedElements] = useState([]);
+
   return (
     <div className={styles.container}>
       {/* 헤더 */}
-      <Header />
+      {!roomId && <Header />}
       {/* 모달 테스트용 */}
       {/* <button onClick={() => setFoundCompound("H₂O")}>모달 테스트 열기</button> */}
+      {roomId && (
+        <div className={styles.timer}>{status === "wait" ? 0 : time}</div>
+      )}
 
       {/* 플레이 화면 */}
       <section
@@ -214,6 +249,7 @@ export default function Game() {
           undoStack={undoStack}
           setUndoStack={setUndoStack}
         /> */}
+        {roomId && <MixArea battle selectedElements={enemySelectedElements} />}
         <MixArea
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}

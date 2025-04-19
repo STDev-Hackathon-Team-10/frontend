@@ -2,6 +2,7 @@ import styles from "../Game.module.css";
 import StaticElement from "./StaticElement";
 
 export default function MixArea({
+  battle = false,
   selectedElements,
   setSelectedElements,
   elementRefs,
@@ -44,6 +45,7 @@ export default function MixArea({
       {groupedElements.map((group, i) => (
         <StaticElement
           key={i}
+          battle={battle}
           el={group.object}
           count={group.count}
           setSelectedElements={setSelectedElements}
