@@ -18,6 +18,7 @@ export default function Game() {
   const MAX_ELEMENTS = 90;
   const trashRef = useRef(null);
   const elementRefs = useRef({});
+  
 
   // 페이징 설정
   const itemsPerPage = 6;

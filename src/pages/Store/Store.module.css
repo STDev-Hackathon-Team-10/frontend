@@ -1,0 +1,130 @@
+.storeContainer {
+    padding: 24px;
+    font-family: 'Pretendard', sans-serif;
+  }
+  
+  .sectionBox {
+    background: #fff;
+    padding: 0 0 5px 0;
+    border-radius: 12px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  
+  .sectionTitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+  
+  .coinBox {
+    background: #fef3c7;
+    padding: 24px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .coinTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  
+  .rewardBtn {
+    background-color: #facc15;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .honorBox {
+    background-color: #f9fafb;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+  }
+  
+  .honorComing {
+    color: #888;
+    font-size: 14px;
+  }
+  
+  
+  .gridSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 16px;
+  }
+  
+  .elementCard {
+    width: 100px;
+    height: 130px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .atom {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    color: white;
+    border: 2px solid #000;
+  }
+  
+  .buyBtn {
+    font-size: 12px;
+    padding: 4px 10px;
+    border: none;
+    background-color: #facc15;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .pagination {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  
+  .pageBtn {
+    font-size: 14px;
+    padding: 4px 12px;
+    background-color: #e5e7eb;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .honorSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    min-height: 100px;
+  }
