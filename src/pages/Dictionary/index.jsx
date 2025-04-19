@@ -38,31 +38,31 @@ export default function Dictionary() {
       <section className={styles.body}>
         <h2 className={styles.title}>찾은 혼합물 개수</h2>
 
-        <div className={styles.gridBody}>
-          <div className={styles.grid}>
-            {Array(20)
-              .fill()
-              .map((_, index) => {
-                const compound = foundCompounds[index % foundCompounds.length];
-                return (
-                  <div
-                    key={index}
-                    className={styles.card}
-                    onClick={() => setSelectedCompound(compound)}
-                  >
-                    <div className={styles.visual}>
-                      {compound.elements.map((el, idx) => (
-                        <div key={idx} className={styles.atom}>
-                          {el}
-                        </div>
-                      ))}
-                    </div>
-                    <p className={styles.name}>{compound.name}</p>
+        {/* <div className={styles.gridBody}> */}
+        <div className={styles.grid}>
+          {Array(20)
+            .fill()
+            .map((_, index) => {
+              const compound = foundCompounds[index % foundCompounds.length];
+              return (
+                <div
+                  key={index}
+                  className={styles.card}
+                  onClick={() => setSelectedCompound(compound)}
+                >
+                  <div className={styles.visual}>
+                    {compound.elements.map((el, idx) => (
+                      <div key={idx} className={styles.atom}>
+                        {el}
+                      </div>
+                    ))}
                   </div>
-                );
-              })}
-          </div>
+                  <p className={styles.name}>{compound.name}</p>
+                </div>
+              );
+            })}
         </div>
+        {/* </div> */}
         <br />
         <br />
       </section>

@@ -11,11 +11,13 @@
   flex-direction: column;
   overflow: hidden;
   padding: 20px;
+  height: 100%;
 }
 
 .gridBody {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: visible;
+  height: 100%;
   padding-right: 6px;
   overflow-x: hidden;
 }

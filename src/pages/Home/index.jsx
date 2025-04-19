@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router";
 import styles from "./Home.module.css";
 import logo from "../../Asset/logo.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { saveState } from "../../utils/storage";
 import axios from "axios";
+import Autocomplete from "../../components/Autocomplete";
 
 axios.interceptors.response.use(undefined, (err) => {
   return err.response;
@@ -12,6 +13,21 @@ axios.interceptors.response.use(undefined, (err) => {
 export default function Home() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
+  const [group, setGroup] = useState("");
+  const [groups, setGroups] = useState([]);
+
+  const fetchGroups = async () => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/group/find/all`
+    );
+    const data = response.data.data;
+    const groupNames = data.map((group) => group.groupName);
+    setGroups(groupNames);
+  };
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -30,7 +46,13 @@ export default function Home() {
           />
         </div>
         <div className={styles.group}>
-          {/* <input placeholder="소속 그룹 (예: Team A" /> */}
+          {/* <input
+            placeholder="소속 그룹 (예: Team A"
+            onChange={(e) => {
+              setGroup(e.target.value.trim());
+            }}
+          /> */}
+          <Autocomplete options={groups} onSelect={(e) => setGroup(e)} />
         </div>
       </div>
 
@@ -42,17 +64,21 @@ export default function Home() {
               alert("닉네임을 입력하세요.");
               return;
             }
+            if (group.length < 1) {
+              alert("소속 그룹을 입력하세요.");
+              return;
+            }
             await axios.post(`${import.meta.env.VITE_API_URL}/user/register`, {
               userName: username,
-              groupName: "default",
+              groupName: group,
             });
             let response = await axios.get(
               `${import.meta.env.VITE_API_URL}/user/getIdByUsername/${username}`
             );
             let userId = response.data.data;
-            console.log(userId);
             saveState("uid", userId);
             saveState("username", username);
+            saveState("group", group);
             navigate("/game");
           }}
         >
