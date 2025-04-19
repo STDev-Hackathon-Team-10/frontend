@@ -3,7 +3,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Home from "./pages/Home";
-import Dictionary from "./pages/Dictionary/index.jsx";
+import Store from "./pages/Store/index.jsx";
 
 let router = createBrowserRouter([
   {
@@ -15,8 +15,8 @@ let router = createBrowserRouter([
         Component: Home,
       },
       {
-        path: "dictionary",
-        Component: Dictionary,
+        path: "store",
+        Component: Store,
       },
     ],
   },

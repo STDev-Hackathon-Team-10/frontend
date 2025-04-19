@@ -6,7 +6,7 @@ export default function Home() {
     <div>
       <h1>Home</h1>
       <p>Welcome to the Home page!</p>
-      <Link to="/game">Go to game page</Link>
+      <Link to="/store">Go to store page</Link>
     </div>
   );
 }
