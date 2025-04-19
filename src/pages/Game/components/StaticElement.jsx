@@ -45,7 +45,20 @@ export default function StaticElement({
       onAnimationEnd={() => {
         el.animate = false;
       }}
-      onClick={() => {}}
+      onClick={() => {
+        setSelectedElements((prev) => {
+          // remove clicked element
+          const newElements = [...prev];
+          const index = newElements.findIndex(
+            (item) => item.symbol === el.symbol
+          );
+          if (index !== -1) {
+            newElements.splice(index, 1);
+          }
+          return newElements;
+        });
+        setUndoStack((prev) => [...prev, { action: "remove", element: el }]);
+      }}
     >
       {el.symbol}
       {count > 1 && <div className={styles.countBadge}>{count}</div>}

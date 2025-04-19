@@ -118,13 +118,20 @@ export default function Game() {
   }, [selectedElements]);
 
   const checkFormula = async (formula) => {
+    if (formula.length === 0) {
+      setFoundCompound(null);
+      return;
+    }
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/collection/find/${formula}`
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/chemical/formula/search?userId=4`,
+        {
+          formula,
+        }
       );
       if (response.data) {
         console.log(response.data);
-        setFoundCompound(response.data.data.chemicalNameKo);
+        setFoundCompound(response.data.data?.chemical?.chemicalNameKo);
       }
     } catch (e) {
       console.error("Error fetching compound data:", e);
@@ -213,7 +220,10 @@ export default function Game() {
       <CompoundModal
         compound={foundCompound}
         onMove={() => navigate("/dictionary")}
-        onClose={() => setFoundCompound(null)}
+        onClose={() => {
+          setFoundCompound(null);
+          setSelectedElements([]);
+        }}
       />
 
       {/* 원소 슬라이더 */}

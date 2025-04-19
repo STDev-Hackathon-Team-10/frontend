@@ -1,4 +1,5 @@
 // src/pages/Game/components/CompoundModal.jsx
+import { FaX } from "react-icons/fa6";
 import styles from "../Game.module.css";
 import { useEffect, useRef } from "react";
 
@@ -21,9 +22,9 @@ export default function CompoundModal({ compound, onMove, onClose }) {
 
   return (
     <div className={styles.modalOverlay}>
-      <div className={styles.modalBox}  ref={modalRef}>
-                <button className={styles.closeBtn} onClick={onClose}>
-          ✕
+      <div className={styles.modalBox} ref={modalRef}>
+        <button className={styles.closeBtn} onClick={onClose}>
+          <FaX size={20} />
         </button>
         <p className={styles.compoundText}>{compound}</p>
         <p>발견했습니다!</p>
