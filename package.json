@@ -13,6 +13,7 @@
     "axios": "^1.8.4",
     "classnames": "^2.5.1",
     "kekule": "^1.0.2",
+    "motion": "^12.7.4",
     "openchemlib": "^9.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

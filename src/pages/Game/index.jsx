@@ -14,6 +14,7 @@ import { levels } from "../../data/levels";
 import { loadState, saveFoundCompound } from "../../utils/storage";
 import trash from "../../Asset/trash.svg";
 import { io } from "socket.io-client";
+import { motion } from "motion/react";
 
 // 화학식 변환 유틸리티 함수
 const convertToFormula = (elements) => {
@@ -173,6 +174,7 @@ export default function Game() {
   const [ready, setReady] = useState(false);
   const [users, setUsers] = useState([]);
   const [winner, setWinner] = useState(null);
+  const [scores, setScores] = useState([]);
   const socketRef = useRef(null);
   const username = loadState("username");
   useEffect(() => {
@@ -266,10 +268,16 @@ export default function Game() {
             setSelectedElements={() => {}}
             setUndoStack={() => {}}
           >
-            <span className={styles.hp}>
+            <motion.span
+              key={users.find((e) => e.id !== socketRef.current.id)?.hp ?? "hp"}
+              className={styles.hp}
+              initial={{ scale: 1, color: "black" }}
+              animate={{ scale: [1.3, 0.9, 1.1, 1], color: "red" }}
+              transition={{ duration: 0.5 }}
+            >
               <FaHeart style={{ marginRight: "10px", color: "red" }} />
               {users.find((e) => e.id !== socketRef.current.id)?.hp}
-            </span>
+            </motion.span>
           </MixArea>
         )}
         {roomId && <span style={{ borderTop: "2px solid grey" }} />}
@@ -279,10 +287,16 @@ export default function Game() {
           setUndoStack={setUndoStack}
         >
           {roomId && (
-            <span className={styles.hp}>
+            <motion.span
+              key={users.find((e) => e.id === socketRef.current.id)?.hp ?? "hp"}
+              className={styles.hp}
+              initial={{ scale: 1, color: "black" }}
+              animate={{ scale: [1.3, 0.9, 1.1, 1], color: "red" }}
+              transition={{ duration: 0.5 }}
+            >
               <FaHeart style={{ marginRight: "10px", color: "red" }} />
               {users.find((e) => e.id === socketRef.current.id)?.hp}
-            </span>
+            </motion.span>
           )}
         </MixArea>
         {roomId && (status === "ready" || status === "end") && (
