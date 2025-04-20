@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import { FaRedo, FaUndo } from "react-icons/fa";
 
@@ -13,6 +13,7 @@ import { coloredElements } from "../../data/elements";
 import { levels } from "../../data/levels";
 import { loadState } from "../../utils/storage";
 import trash from "../../Asset/trash.svg";
+import { io } from "socket.io-client";
 
 // 화학식 변환 유틸리티 함수
 const convertToFormula = (elements) => {
@@ -42,6 +43,7 @@ const convertToFormula = (elements) => {
 };
 
 export default function Game() {
+  const { roomId } = useParams();
   // 상태 관리
   const [selectedElements, setSelectedElements] = useState([]);
   const [playerElements, setPlayerElements] = useState([]);
@@ -61,16 +63,20 @@ export default function Game() {
 
   // 화학식 검사 및 화합물 찾기
   useEffect(() => {
-    return;
-    if (selectedElements.length > 0) {
-      const formula = convertToFormula(selectedElements);
-      checkFormula(formula);
-    }
+    const formula = convertToFormula(selectedElements);
+    checkFormula(formula, selectedElements);
   }, [selectedElements]);
 
   // API 호출로 화학식 검사
-  const checkFormula = async (formula) => {
-    if (!formula) {
+  const checkFormula = async (formula, elements) => {
+    if (roomId && status === "playing" && socketRef.current) {
+      socketRef.current.emit("sendFormula", {
+        roomId,
+        formula,
+        elements,
+      });
+    }
+    if (!formula || formula.length < 1) {
       setFoundCompound(null);
       return;
     }
@@ -141,9 +147,69 @@ export default function Game() {
     navigate("/dictionary");
   };
 
+  const [time, setTime] = useState(0);
+  const [status, setStatus] = useState("ready");
+  const [ready, setReady] = useState(false);
+  const [users, setUsers] = useState([]);
+  const socketRef = useRef(null);
+  const username = loadState("username");
+  useEffect(() => {
+    if (!roomId) return;
+    socketRef.current = io(import.meta.env.VITE_SOCKET_URL);
+    socketRef.current.emit("joinRoom", roomId, username);
+    socketRef.current.on("roomUpdate", (room) => {
+      setStatus(room.status);
+      setUsers(room.players);
+    });
+    socketRef.current.on("gameStart", () => {
+      setSelectedElements([]);
+      setPlayerElements([]);
+      setUndoStack([]);
+      setReady(false);
+      setStatus("playing");
+    });
+    socketRef.current.on("gameEnd", (winner) => {
+      setStatus("end");
+    });
+    socketRef.current.on("timerUpdate", (seconds) => {
+      setTime(seconds);
+    });
+    socketRef.current.on("receiveFormula", (data) => {
+      setPlayerElements((_) => data.elements);
+    });
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!roomId) return;
+    if (!ready) return;
+    if (status === "ready" && socketRef.current) {
+      socketRef.current.emit("playerReady", roomId);
+    }
+  }, [ready]);
+
   return (
     <div className={styles.container}>
-      <Header />
+      {!roomId && <Header />}
+      {roomId && (
+        <div className={styles.gameState}>
+          {status === "ready" && "대기 중"}
+          {status === "playing" && (
+            <span className={styles.centerText}>
+              <span style={{ fontSize: "15px" }}>
+                분자식을 조합하여 상대방과 대결하세요.
+              </span>
+              <br />
+              남은 시간: {time}초
+            </span>
+          )}
+          {status === "end" && (
+            <span className={styles.gameState}>게임 종료</span>
+          )}
+        </div>
+      )}
 
       <section
         id="playArea"
@@ -181,6 +247,34 @@ export default function Game() {
           setSelectedElements={setSelectedElements}
           setUndoStack={setUndoStack}
         />
+        {(status === "ready" || status === "end") && (
+          <div className={styles.statusContainer}>
+            <div className={styles.userStatus}>
+              {status === "ready" && (
+                <span className={styles.statusText}>
+                  {Object.keys(users).length <= 1
+                    ? "기다리는 중..."
+                    : "준비 중..."}
+                </span>
+              )}
+            </div>
+            <div className={styles.userStatus}>
+              {status === "ready" && ready && (
+                <span className={styles.statusText}>준비 완료</span>
+              )}
+              {status === "ready" && !ready && (
+                <span className={styles.statusText}>
+                  <button
+                    className={styles.button}
+                    onClick={() => setReady(true)}
+                  >
+                    준비
+                  </button>
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 화합물 발견 모달 */}

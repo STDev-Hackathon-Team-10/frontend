@@ -11,7 +11,6 @@ import Multiplay from "./pages/Multiplay";
 import Game from "./pages/Game";
 import AtomRenderer from "./components/Renderer";
 
-
 let router = createBrowserRouter([
   {
     path: "/",
@@ -23,6 +22,10 @@ let router = createBrowserRouter([
       },
       {
         path: "game",
+        Component: Game,
+      },
+      {
+        path: "game/:roomId",
         Component: Game,
       },
       {
@@ -49,7 +52,6 @@ let router = createBrowserRouter([
         path: "multiplay",
         Component: Multiplay,
       },
-      
     ],
   },
 ]);
