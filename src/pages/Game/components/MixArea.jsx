@@ -5,6 +5,7 @@ export default function MixArea({
   selectedElements,
   setSelectedElements,
   setUndoStack,
+  children,
 }) {
   const counts = {};
   selectedElements.forEach((el) => {
@@ -48,6 +49,7 @@ export default function MixArea({
           setUndoStack={setUndoStack}
         />
       ))}
+      {children}
     </div>
   );
 }

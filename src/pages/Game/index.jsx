@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
-import { FaRedo, FaUndo } from "react-icons/fa";
+import { FaHeart, FaRedo, FaUndo } from "react-icons/fa";
 
 import styles from "./Game.module.css";
 import Header from "./components/Header";
@@ -49,6 +49,8 @@ export default function Game() {
   const [playerElements, setPlayerElements] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [foundCompound, setFoundCompound] = useState(null);
+  // 배틀 시 찾은 원소들
+  const [atoms, setAtoms] = useState([]);
 
   // 상수 및 참조
   const navigate = useNavigate();
@@ -89,8 +91,10 @@ export default function Game() {
       );
 
       if (response.data?.data) {
-        if (response.data.data.success === false) return;
-        setFoundCompound(response.data.data.chemical?.chemicalNameKo);
+        if (response.data.data.success === false && !roomId) return;
+        if (!roomId)
+          setFoundCompound(response.data.data.chemical?.chemicalNameKo);
+        else setAtoms((prev) => [...prev, response.data.data.chemical]);
       }
     } catch (error) {
       console.error("화학식 검색 중 오류 발생:", error);
@@ -151,6 +155,7 @@ export default function Game() {
   const [status, setStatus] = useState("ready");
   const [ready, setReady] = useState(false);
   const [users, setUsers] = useState([]);
+  const [winner, setWinner] = useState(null);
   const socketRef = useRef(null);
   const username = loadState("username");
   useEffect(() => {
@@ -170,6 +175,7 @@ export default function Game() {
     });
     socketRef.current.on("gameEnd", (winner) => {
       setStatus("end");
+      setWinner(winner);
     });
     socketRef.current.on("timerUpdate", (seconds) => {
       setTime(seconds);
@@ -185,7 +191,7 @@ export default function Game() {
   useEffect(() => {
     if (!roomId) return;
     if (!ready) return;
-    if (status === "ready" && socketRef.current) {
+    if (socketRef.current) {
       socketRef.current.emit("playerReady", roomId);
     }
   }, [ready]);
@@ -238,25 +244,60 @@ export default function Game() {
         {/* 원소 조합 영역 */}
         <MixArea
           selectedElements={playerElements}
-          setSelectedElements={setPlayerElements}
+          setSelectedElements={() => {}}
           setUndoStack={() => {}}
-        />
+        >
+          <span className={styles.hp}>
+            <FaHeart style={{ marginRight: "10px", color: "red" }} />
+            {users.find((e) => e.id !== socketRef.current.id)?.hp}
+          </span>
+        </MixArea>
         <span style={{ borderTop: "2px solid grey" }} />
         <MixArea
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
           setUndoStack={setUndoStack}
-        />
+        >
+          <span className={styles.hp}>
+            <FaHeart style={{ marginRight: "10px", color: "red" }} />
+            {users.find((e) => e.id === socketRef.current.id)?.hp}
+          </span>
+        </MixArea>
         {(status === "ready" || status === "end") && (
           <div className={styles.statusContainer}>
             <div className={styles.userStatus}>
               {status === "ready" && (
                 <span className={styles.statusText}>
                   {users.length <= 1
-                    ? "기다리는 중..."
-                    : users.find((e) => e.username !== username)?.ready
+                    ? "상대방 기다리는 중..."
+                    : users.find((e) => e.id !== socketRef.current.id)?.ready
                     ? "준비 완료"
                     : "준비 중..."}
+                </span>
+              )}
+              {status === "end" && (
+                <span>
+                  {winner === socketRef.current.id ? (
+                    <span
+                      className={styles.statusText}
+                      style={{
+                        color: "green",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      승리!
+                    </span>
+                  ) : (
+                    <span
+                      className={styles.statusText}
+                      style={{
+                        color: "red",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      패배
+                    </span>
+                  )}
                 </span>
               )}
             </div>
@@ -279,7 +320,6 @@ export default function Game() {
                   <button
                     className={styles.button}
                     onClick={() => {
-                      setStatus("ready");
                       setReady(true);
                     }}
                   >
