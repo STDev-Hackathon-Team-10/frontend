@@ -12,17 +12,16 @@ import { FaRedo, FaUndo } from "react-icons/fa";
 // Result Modal Component
 const ResultModal = ({ isOpen, result, onClose }) => {
   const navigate = useNavigate();
-  
+
   if (!isOpen) return null;
-  
+
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
-        <h2 className={styles.resultText}>{result === "win" ? "You WIN!" : "You LOSE!"}</h2>
-        <button 
-          className={styles.homeButton}
-          onClick={() => navigate("/")}
-        >
+        <h2 className={styles.resultText}>
+          {result === "win" ? "You WIN!" : "You LOSE!"}
+        </h2>
+        <button className={styles.homeButton} onClick={() => navigate("/")}>
           홈화면 돌아가기
         </button>
       </div>
@@ -39,7 +38,7 @@ export default function Multiplay() {
   const [isActive, setIsActive] = useState(true); // 게임 시작 시 타이머 활성화
   const [showResultModal, setShowResultModal] = useState(false);
   const [gameResult, setGameResult] = useState(null); // "win" or "lose"
-  
+
   const trashRef = useRef(null);
   const elementRefs = useRef({});
   const timerRef = useRef(null);
@@ -71,13 +70,13 @@ export default function Multiplay() {
   const handleTimerEnd = () => {
     // 타이머 종료 시 실행할 로직
     setIsActive(false);
-    
+
     // 임시로 점수를 계산하여 승패 결정 (실제로는 상대방과 비교 로직이 필요)
     // 여기서는 예시로 selectedElements의 개수가 5개 이상이면 승리로 가정
     const isWinner = selectedElements.length >= 5;
     setGameResult(isWinner ? "win" : "lose");
     setShowResultModal(true);
-    
+
     console.log("시간 종료!");
   };
 
@@ -167,7 +166,7 @@ export default function Multiplay() {
             undoStack={undoStack}
             setUndoStack={setUndoStack}
           />
-        
+
           <div className={styles.controls}>
             <button className={styles.arrowBtn} onClick={handleUndo}>
               <FaUndo size={20} />
@@ -199,10 +198,10 @@ export default function Multiplay() {
           setShowArrows={setShowArrows}
         />
       </div>
-      
+
       {/* 결과 모달 */}
-      <ResultModal 
-        isOpen={showResultModal} 
+      <ResultModal
+        isOpen={showResultModal}
         result={gameResult}
         onClose={() => setShowResultModal(false)}
       />

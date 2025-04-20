@@ -1,18 +1,16 @@
 // src/pages/Game/components/DraggableElement.jsx
-import React from "react";
+import React, { useRef } from "react";
 import styles from "../Game.module.css";
 import { useEffect } from "react";
 
 export default function StaticElement({
   el,
   idx,
-  elementRefs,
-  selectedElements,
   setSelectedElements,
   count,
-  trashRef,
   setUndoStack,
 }) {
+  let elementRefs = useRef({});
   if (!elementRefs.current[el.symbol]) {
     elementRefs.current[el.symbol] = React.createRef();
   }
