@@ -4,7 +4,7 @@ import { IoStorefront, IoTrophySharp } from "react-icons/io5";
 import { FaMedal } from "react-icons/fa";
 import { HiArrowUturnLeft } from "react-icons/hi2";
 
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -23,9 +23,9 @@ export default function Header() {
         />
       </div>
 
-      <div className={styles.center}>
+      <Link className={styles.center} to={"/"}>
         <img src={mini_logo} alt="로고" className={styles.title} />
-      </div>
+      </Link>
 
       <div className={styles.rightButtons}>
         <FaMedal
