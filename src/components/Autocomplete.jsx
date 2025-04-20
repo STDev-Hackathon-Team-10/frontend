@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 
-function Autocomplete({ options, onSelect }) {
+function Autocomplete({ options, onSelect, onChange }) {
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleChange = (event) => {
     const value = event.target.value;
+    onChange(value);
     setInputValue(value);
 
     // 입력 값이 있을 때만 자동 완성 기능 활성화

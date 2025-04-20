@@ -109,7 +109,13 @@ export default function Home() {
           {playMode === "single" && (
             <>
               <div className={styles.group}>
-                <Autocomplete options={groups} onSelect={(e) => setGroup(e)} />
+                <Autocomplete
+                  options={groups}
+                  onSelect={(e) => setGroup(e)}
+                  onChange={(e) => {
+                    setGroup(e);
+                  }}
+                />
               </div>
               <button className={styles.startbtn} onClick={handleSingleStart}>
                 시작하기
