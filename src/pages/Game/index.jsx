@@ -11,7 +11,7 @@ import MixArea from "./components/MixArea";
 
 import { coloredElements } from "../../data/elements";
 import { levels } from "../../data/levels";
-import { loadState } from "../../utils/storage";
+import { loadState, saveFoundCompound } from "../../utils/storage";
 import trash from "../../Asset/trash.svg";
 import { io } from "socket.io-client";
 
@@ -58,7 +58,7 @@ export default function Game() {
 
   // 레벨 기반 요소 필터링
   const levelIndex = loadState("level") ?? 0;
-  const availableLevels = levels.slice(levelIndex, levelIndex + 5);
+  const availableLevels = levels.slice(levelIndex, levelIndex + 10);
   const filteredElements = coloredElements.filter((el) =>
     availableLevels.includes(el.symbol)
   );
@@ -84,15 +84,24 @@ export default function Game() {
     }
 
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/collection/find/${formula}`
-      );
+      const response = roomId
+        ? await axios.get(
+            `${import.meta.env.VITE_API_URL}/collection/find/${formula}`
+          )
+        : await axios.post(
+            `${import.meta.env.VITE_API_URL}/chemical/formula/search`,
+            {
+              formula,
+              userName: username,
+            }
+          );
 
       if (response.data?.data) {
         if (response.data.data.success === false && !roomId) return;
-        if (!roomId)
+        if (!roomId) {
           setFoundCompound(response.data.data.chemical?.chemicalNameKo);
-        else {
+          saveFoundCompound(response.data.data.chemical);
+        } else {
           if (atoms.find((atom) => atom === formula)) return;
           setAtoms((prev) => [...prev, response.data.data.molecularFormula]);
           let power = await axios.get(
@@ -117,6 +126,8 @@ export default function Game() {
       ...prev,
       { ...element, x: randomX, y: randomY, animate: true },
     ]);
+
+    saveFoundCompound(element);
 
     // 새 요소를 추가할 때 되돌리기 스택 초기화
     setUndoStack([]);
@@ -249,28 +260,32 @@ export default function Game() {
         </div>
 
         {/* 원소 조합 영역 */}
-        <MixArea
-          selectedElements={playerElements}
-          setSelectedElements={() => {}}
-          setUndoStack={() => {}}
-        >
-          <span className={styles.hp}>
-            <FaHeart style={{ marginRight: "10px", color: "red" }} />
-            {users.find((e) => e.id !== socketRef.current.id)?.hp}
-          </span>
-        </MixArea>
-        <span style={{ borderTop: "2px solid grey" }} />
+        {roomId && (
+          <MixArea
+            selectedElements={playerElements}
+            setSelectedElements={() => {}}
+            setUndoStack={() => {}}
+          >
+            <span className={styles.hp}>
+              <FaHeart style={{ marginRight: "10px", color: "red" }} />
+              {users.find((e) => e.id !== socketRef.current.id)?.hp}
+            </span>
+          </MixArea>
+        )}
+        {roomId && <span style={{ borderTop: "2px solid grey" }} />}
         <MixArea
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
           setUndoStack={setUndoStack}
         >
-          <span className={styles.hp}>
-            <FaHeart style={{ marginRight: "10px", color: "red" }} />
-            {users.find((e) => e.id === socketRef.current.id)?.hp}
-          </span>
+          {roomId && (
+            <span className={styles.hp}>
+              <FaHeart style={{ marginRight: "10px", color: "red" }} />
+              {users.find((e) => e.id === socketRef.current.id)?.hp}
+            </span>
+          )}
         </MixArea>
-        {(status === "ready" || status === "end") && (
+        {roomId && (status === "ready" || status === "end") && (
           <div className={styles.statusContainer}>
             <div className={styles.userStatus}>
               {status === "ready" && (
