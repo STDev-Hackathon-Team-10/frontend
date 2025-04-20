@@ -4,10 +4,8 @@ import StaticElement from "./StaticElement";
 export default function MixArea({
   selectedElements,
   setSelectedElements,
-  elementRefs,
-  trashRef,
-  undoStack,
   setUndoStack,
+  children,
 }) {
   const counts = {};
   selectedElements.forEach((el) => {
@@ -47,14 +45,11 @@ export default function MixArea({
           el={group.object}
           count={group.count}
           setSelectedElements={setSelectedElements}
-          selectedElements={selectedElements}
           idx={i}
-          elementRefs={elementRefs}
-          trashRef={trashRef}
-          undoStack={undoStack}
           setUndoStack={setUndoStack}
         />
       ))}
+      {children}
     </div>
   );
 }

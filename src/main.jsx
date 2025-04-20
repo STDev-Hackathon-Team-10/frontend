@@ -6,11 +6,10 @@ import Home from "./pages/Home";
 import Rank from "./pages/Rank";
 import Honor from "./pages/Honor";
 import Store from "./pages/Store";
-import Dictionary from "./pages/Dictionary/index.jsx";
-import Game from "./pages/Game/index.jsx";
+import Dictionary from "./pages/Dictionary";
+import Multiplay from "./pages/Multiplay";
+import Game from "./pages/Game";
 import AtomRenderer from "./components/Renderer";
-import Rank from "./pages/Rank/index.jsx";
-import Honor from "./pages/Honor/index.jsx";
 
 let router = createBrowserRouter([
   {
@@ -23,6 +22,10 @@ let router = createBrowserRouter([
       },
       {
         path: "game",
+        Component: Game,
+      },
+      {
+        path: "game/:roomId",
         Component: Game,
       },
       {
@@ -42,16 +45,12 @@ let router = createBrowserRouter([
         Component: Store,
       },
       {
-        path: "rank",
-        Component: Rank,
-      },
-      {
-        path: "honor",
-        Component: Honor,
-      },
-      {
         path: "test/renderer",
         Component: AtomRenderer,
+      },
+      {
+        path: "multiplay",
+        Component: Multiplay,
       },
     ],
   },

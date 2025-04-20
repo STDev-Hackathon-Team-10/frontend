@@ -1,42 +1,41 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useParams } from "react-router";
+import axios from "axios";
+import { FaHeart, FaRedo, FaUndo } from "react-icons/fa";
+
 import styles from "./Game.module.css";
 import Header from "./components/Header";
 import ElementSlider from "./components/ElementSlider";
-import PlayArea from "./components/PlayArea";
-import { coloredElements } from "./data/elements";
-import trash from "../../Asset/trash.svg";
 import CompoundModal from "./components/CompoundModal";
-import { useNavigate } from "react-router";
 import MixArea from "./components/MixArea";
-import { FaRedo, FaUndo } from "react-icons/fa";
-import axios from "axios";
 
+import { coloredElements } from "../../data/elements";
+import { levels } from "../../data/levels";
+import { loadState } from "../../utils/storage";
+import trash from "../../Asset/trash.svg";
+import { io } from "socket.io-client";
+
+// 화학식 변환 유틸리티 함수
 const convertToFormula = (elements) => {
-  if (!elements || elements.length === 0) {
-    return "";
-  }
+  if (!elements?.length) return "";
 
   let formula = "";
-  let count = 0;
-  let lastSymbol = "";
+  let count = 1;
+  let lastSymbol = elements[0].symbol;
 
-  for (let i = 0; i < elements.length; i++) {
-    const element = elements[i];
+  for (let i = 1; i <= elements.length; i++) {
+    const currentSymbol = i < elements.length ? elements[i].symbol : null;
 
-    if (element.symbol === lastSymbol) {
+    if (currentSymbol === lastSymbol) {
       count++;
     } else {
-      if (lastSymbol !== "") {
-        formula += count > 1 ? count : "";
-      }
-      formula += element.symbol;
-      lastSymbol = element.symbol;
-      count = 1;
-    }
+      // 원소 기호와 개수 추가
+      formula += lastSymbol;
+      if (count > 1) formula += count;
 
-    // 마지막 요소인 경우 남은 count를 formula에 추가
-    if (i === elements.length - 1) {
-      formula += count > 1 ? count : "";
+      // 다음 원소로 초기화
+      lastSymbol = currentSymbol;
+      count = 1;
     }
   }
 
@@ -44,139 +43,193 @@ const convertToFormula = (elements) => {
 };
 
 export default function Game() {
+  const { roomId } = useParams();
+  // 상태 관리
   const [selectedElements, setSelectedElements] = useState([]);
+  const [playerElements, setPlayerElements] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
-  const [page, setPage] = useState(0);
-  const [showArrows, setShowArrows] = useState(false);
   const [foundCompound, setFoundCompound] = useState(null);
-  const navigate = useNavigate();
-  const MAX_ELEMENTS = 90;
-  const trashRef = useRef(null);
-  const elementRefs = useRef({});
-  const [modalVisible, setModalVisible] = useState(false);
-  const [atomIndex, setAtomIndex] = useState(0);
+  // 배틀 시 찾은 원소들
+  const [atoms, setAtoms] = useState([]);
 
-  // 페이징 설정
-  const itemsPerPage = 6;
-  const totalPages = Math.ceil(coloredElements.length / itemsPerPage);
-  const pagedElements = coloredElements.slice(
-    page * itemsPerPage,
-    (page + 1) * itemsPerPage
+  // 상수 및 참조
+  const navigate = useNavigate();
+  const trashRef = useRef(null);
+
+  // 레벨 기반 요소 필터링
+  const levelIndex = loadState("level") ?? 0;
+  const availableLevels = levels.slice(levelIndex, levelIndex + 5);
+  const filteredElements = coloredElements.filter((el) =>
+    availableLevels.includes(el.symbol)
   );
 
-  // 페이지 이동
-  const goPrev = () => {
-    setPage((prev) => (prev - 1 + totalPages) % totalPages);
+  // 화학식 검사 및 화합물 찾기
+  useEffect(() => {
+    const formula = convertToFormula(selectedElements);
+    checkFormula(formula, selectedElements);
+  }, [selectedElements]);
+
+  // API 호출로 화학식 검사
+  const checkFormula = async (formula, elements) => {
+    if (roomId && status === "playing" && socketRef.current) {
+      socketRef.current.emit("sendFormula", {
+        roomId,
+        formula,
+        elements,
+      });
+    }
+    if (!formula || formula.length < 1) {
+      setFoundCompound(null);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/collection/find/${formula}`
+      );
+
+      if (response.data?.data) {
+        if (response.data.data.success === false && !roomId) return;
+        if (!roomId)
+          setFoundCompound(response.data.data.chemical?.chemicalNameKo);
+        else {
+          if (atoms.find((atom) => atom === formula)) return;
+          setAtoms((prev) => [...prev, response.data.data.molecularFormula]);
+          let power = await axios.get(
+            `${import.meta.env.VITE_API_URL}/chemical/attack-power/${formula}`
+          );
+          let data = power.data.data;
+          if (data) socketRef.current.emit("attack", data.attackPower);
+        }
+      }
+    } catch (error) {
+      console.error("화학식 검색 중 오류 발생:", error);
+    }
   };
 
-  const goNext = () => {
-    setPage((prev) => (prev + 1) % totalPages);
+  // 원소 조작 핸들러
+  const handleElementAdd = (element) => {
+    // 원소를 무작위 위치에 추가
+    const randomX = 150 + Math.random() * 200;
+    const randomY = 100 + Math.random() * 200;
+
+    setSelectedElements((prev) => [
+      ...prev,
+      { ...element, x: randomX, y: randomY, animate: true },
+    ]);
+
+    // 새 요소를 추가할 때 되돌리기 스택 초기화
+    setUndoStack([]);
   };
 
-  // undo/redo
+  // Undo/Redo 기능
   const handleUndo = () => {
     if (selectedElements.length === 0) return;
+
     const updated = [...selectedElements];
     const popped = updated.pop();
+
     setSelectedElements(updated);
     setUndoStack((prev) => [...prev, popped]);
   };
 
   const handleRedo = () => {
     if (undoStack.length === 0) return;
-    const restored = [...undoStack];
-    const recovered = restored.pop();
+
+    const updated = [...undoStack];
+    const recovered = updated.pop();
+
     setSelectedElements((prev) => [...prev, recovered]);
-    setUndoStack(restored);
+    setUndoStack(updated);
   };
 
-  // 쓰레기통 초기화
   const handleReset = () => {
     setSelectedElements([]);
     setUndoStack([]);
   };
 
-  // 클릭하여 원소 추가
-  const handleElementAdd = async (el) => {
-    const centerX = 150 + Math.random() * 200;
-    const centerY = 100 + Math.random() * 200;
-
-    setSelectedElements((prev) => [
-      ...prev,
-      { ...el, x: centerX, y: centerY, animate: true },
-    ]);
-
-    setUndoStack([]);
-
-    // let response = await axios.get(`${import.meta.env.VITE_API_URL}/collection/find/${}`)
+  // 모달 핸들러
+  const handleModalClose = () => {
+    setFoundCompound(null);
   };
+
+  const handleDictionaryMove = () => {
+    navigate("/dictionary");
+  };
+
+  const [time, setTime] = useState(0);
+  const [status, setStatus] = useState("ready");
+  const [ready, setReady] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [winner, setWinner] = useState(null);
+  const socketRef = useRef(null);
+  const username = loadState("username");
+  useEffect(() => {
+    if (!roomId) return;
+    socketRef.current = io(import.meta.env.VITE_SOCKET_URL);
+    socketRef.current.emit("joinRoom", roomId, username);
+    socketRef.current.on("roomUpdate", (room) => {
+      setStatus(room.status);
+      setUsers(Object.values(room.players));
+    });
+    socketRef.current.on("gameStart", () => {
+      setSelectedElements([]);
+      setPlayerElements([]);
+      setUndoStack([]);
+      setReady(false);
+      setAtoms([]);
+      setStatus("playing");
+    });
+    socketRef.current.on("gameEnd", (winner) => {
+      setStatus("end");
+      setWinner(winner);
+    });
+    socketRef.current.on("timerUpdate", (seconds) => {
+      setTime(seconds);
+    });
+    socketRef.current.on("receiveFormula", (data) => {
+      setPlayerElements((_) => data.elements);
+    });
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
-    if (selectedElements.length === 0) return;
-    console.log(convertToFormula(selectedElements));
-    checkFormula(convertToFormula(selectedElements));
-  }, [selectedElements]);
-
-  const checkFormula = async (formula) => {
-    if (formula.length === 0) {
-      setFoundCompound(null);
-      return;
+    if (!roomId) return;
+    if (!ready) return;
+    if (socketRef.current) {
+      socketRef.current.emit("playerReady", roomId);
     }
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/chemical/formula/search?userId=4`,
-        {
-          formula,
-        }
-      );
-      if (response.data) {
-        console.log(response.data);
-        setFoundCompound(response.data.data?.chemical?.chemicalNameKo);
-      }
-    } catch (e) {
-      console.error("Error fetching compound data:", e);
-    }
-  };
-
-  // 드래그하여 원소 추가
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setSelectedElements((prev) => [
-      ...prev,
-      {
-        ...data,
-        x,
-        y,
-        animate: true, // 새 필드
-      },
-    ]);
-  };
-
-  // 슬라이더 버튼 클릭시 이동
-  const goToPage = (pageIndex) => {
-    setPage(pageIndex);
-  };
+  }, [ready]);
 
   return (
     <div className={styles.container}>
-      {/* 헤더 */}
-      <Header />
-      {/* 모달 테스트용 */}
-      {/* <button onClick={() => setFoundCompound("H₂O")}>모달 테스트 열기</button> */}
+      {!roomId && <Header />}
+      {roomId && (
+        <div className={styles.gameState}>
+          {status === "ready" && "대기 중"}
+          {status === "playing" && (
+            <span className={styles.centerText}>
+              <span style={{ fontSize: "15px" }}>
+                분자식을 조합하여 상대방과 대결하세요.
+              </span>
+              <br />
+              남은 시간: {time}초
+            </span>
+          )}
+          {status === "end" && (
+            <span className={styles.gameState}>게임 종료</span>
+          )}
+        </div>
+      )}
 
-      {/* 플레이 화면 */}
       <section
         id="playArea"
         className={styles.playScreen}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
       >
+        {/* 제어 버튼 영역 */}
         <div className={styles.topBar}>
           <div className={styles.controls}>
             <div className={styles.arrowBtn} onClick={handleUndo}>
@@ -194,52 +247,109 @@ export default function Game() {
             </div>
           </div>
         </div>
-        {/* PlayArea를 MixArea로 변경 */}
-        {/* <PlayArea
-          selectedElements={selectedElements}
-          setSelectedElements={setSelectedElements}
-          elementRefs={elementRefs}
-          trashRef={trashRef}
-          undoStack={undoStack}
-          setUndoStack={setUndoStack}
-        /> */}
+
+        {/* 원소 조합 영역 */}
+        <MixArea
+          selectedElements={playerElements}
+          setSelectedElements={() => {}}
+          setUndoStack={() => {}}
+        >
+          <span className={styles.hp}>
+            <FaHeart style={{ marginRight: "10px", color: "red" }} />
+            {users.find((e) => e.id !== socketRef.current.id)?.hp}
+          </span>
+        </MixArea>
+        <span style={{ borderTop: "2px solid grey" }} />
         <MixArea
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
-          elementRefs={elementRefs}
-          trashRef={trashRef}
-          undoStack={undoStack}
           setUndoStack={setUndoStack}
-          setFoundCompound={setFoundCompound}
-          setModalVisible={setModalVisible}
-          atomIndex={atomIndex}
-        />
+        >
+          <span className={styles.hp}>
+            <FaHeart style={{ marginRight: "10px", color: "red" }} />
+            {users.find((e) => e.id === socketRef.current.id)?.hp}
+          </span>
+        </MixArea>
+        {(status === "ready" || status === "end") && (
+          <div className={styles.statusContainer}>
+            <div className={styles.userStatus}>
+              {status === "ready" && (
+                <span className={styles.statusText}>
+                  {users.length <= 1
+                    ? "상대방 기다리는 중..."
+                    : users.find((e) => e.id !== socketRef.current.id)?.ready
+                    ? "준비 완료"
+                    : "준비 중..."}
+                </span>
+              )}
+              {status === "end" && (
+                <span>
+                  {winner === socketRef.current.id ? (
+                    <span
+                      className={styles.statusText}
+                      style={{
+                        color: "green",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      승리!
+                    </span>
+                  ) : (
+                    <span
+                      className={styles.statusText}
+                      style={{
+                        color: "red",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      패배
+                    </span>
+                  )}
+                </span>
+              )}
+            </div>
+            <div className={styles.userStatus}>
+              {status === "ready" && ready && (
+                <span className={styles.statusText}>준비 완료</span>
+              )}
+              {status === "ready" && !ready && (
+                <span className={styles.statusText}>
+                  <button
+                    className={styles.button}
+                    onClick={() => setReady(true)}
+                  >
+                    준비
+                  </button>
+                </span>
+              )}
+              {status === "end" && (
+                <span className={styles.statusText}>
+                  <button
+                    className={styles.button}
+                    onClick={() => {
+                      setReady(true);
+                    }}
+                  >
+                    다시 대결
+                  </button>
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* 모달 테스트 */}
+      {/* 화합물 발견 모달 */}
       <CompoundModal
         compound={foundCompound}
-        onMove={() => navigate("/dictionary")}
-        onClose={() => {
-          setFoundCompound(null);
-          setSelectedElements([]);
-        }}
+        onMove={handleDictionaryMove}
+        onClose={handleModalClose}
       />
 
-      {/* 원소 슬라이더 */}
+      {/* 원소 선택 슬라이더 */}
       <ElementSlider
-        page={page}
-        totalPages={totalPages}
-        pagedElements={coloredElements}
-        goPrev={goPrev}
-        goNext={goNext}
-        goToPage={goToPage}
-        onElementClick={(el) => handleElementAdd(el)}
-        showArrows={showArrows}
-        setShowArrows={setShowArrows}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        setAtomIndex={setAtomIndex}
+        elements={filteredElements}
+        onElementClick={handleElementAdd}
       />
     </div>
   );
