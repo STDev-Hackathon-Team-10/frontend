@@ -15,11 +15,11 @@ export default function Honor() {
       try {
         setLoading(true);
         const response = await fetch(`/title/ai/${userId}`);
-        
+
         if (!response.ok) {
-          throw new Error('Failed to fetch AI titles');
+          throw new Error("Failed to fetch AI titles");
         }
-        
+
         const data = await response.json();
         setAiTitles(data);
       } catch (err) {
@@ -37,26 +37,26 @@ export default function Honor() {
   const handleActivateTitle = async (title) => {
     try {
       const response = await fetch(`/title/ai/${userId}/save`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           titleName: title.titleName,
           description: title.description,
-          unlockCondition: title.unlockCondition
+          unlockCondition: title.unlockCondition,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to activate title');
+        throw new Error("Failed to activate title");
       }
 
       // Update the local state to reflect the change
-      setAiTitles(prevTitles => 
-        prevTitles.map(t => ({
+      setAiTitles((prevTitles) =>
+        prevTitles.map((t) => ({
           ...t,
-          isActive: t.titleId === title.titleId
+          isActive: t.titleId === title.titleId,
         }))
       );
     } catch (err) {
@@ -73,15 +73,17 @@ export default function Honor() {
         <p className={styles.subtitle}>
           당신의 활동을 분석한 AI가 생성한 맞춤형 칭호입니다.
         </p>
-        
+
         {loading && <div className={styles.loading}>칭호 분석 중...</div>}
-        {error && <div className={styles.error}>오류가 발생했습니다: {error}</div>}
-        
+        {/* {error && <div className={styles.error}>오류가 발생했습니다: {error}</div>} */}
+
         <div className={styles.titleList}>
           {aiTitles.map((title) => (
             <div
               key={title.titleId}
-              className={`${styles.titleBox} ${title.isActive ? styles.active : ""}`}
+              className={`${styles.titleBox} ${
+                title.isActive ? styles.active : ""
+              }`}
             >
               <div className={styles.titleName}>
                 {title.titleName}{" "}
@@ -94,7 +96,7 @@ export default function Honor() {
                 🔍 분석: {title.unlockCondition}
               </div>
               {!title.isActive && (
-                <button 
+                <button
                   className={styles.activateButton}
                   onClick={() => handleActivateTitle(title)}
                 >
@@ -108,7 +110,9 @@ export default function Honor() {
         {aiTitles.length === 0 && !loading && (
           <div className={styles.noTitles}>
             <p>현재 생성된 칭호가 없습니다.</p>
-            <p>더 많은 활동을 하면 AI가 당신만의 특별한 칭호를 생성해 드립니다.</p>
+            <p>
+              더 많은 활동을 하면 AI가 당신만의 특별한 칭호를 생성해 드립니다.
+            </p>
           </div>
         )}
       </div>
