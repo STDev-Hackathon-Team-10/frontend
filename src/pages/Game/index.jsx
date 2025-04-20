@@ -184,6 +184,19 @@ export default function Game() {
     socketRef.current.on("roomUpdate", (room) => {
       setStatus(room.status);
       setUsers(Object.values(room.players));
+      const otherPlayer = Object.values(room.players).find(
+        (player) => player.id !== socketRef.current.id
+      );
+      const me = Object.values(room.players).find(
+        (player) => player.id === socketRef.current.id
+      );
+      if (otherPlayer) {
+        if (otherPlayer?.ready && !me?.ready) {
+          setTimeout(() => {
+            setReady(true);
+          }, 2000);
+        }
+      }
     });
     socketRef.current.on("gameStart", () => {
       setSelectedElements([]);
@@ -307,7 +320,7 @@ export default function Game() {
                   {users.length <= 1
                     ? "상대방 기다리는 중..."
                     : users.find((e) => e.id !== socketRef.current.id)?.ready
-                    ? "준비 완료"
+                    ? "상대방 준비 완료. 게임이 2초 후 시작됩니다."
                     : "준비 중..."}
                 </span>
               )}
