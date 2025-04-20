@@ -1,7 +1,11 @@
 .storeContainer {
-    padding: 24px;
-    font-family: 'Pretendard', sans-serif;
-  }
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Pretendard', sans-serif;
+  overflow: hidden;
+}
   
   .sectionBox {
     background: #fff;
@@ -15,6 +19,7 @@
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 12px;
+
   }
   
   .coinBox {

@@ -11,7 +11,7 @@ import MixArea from "./components/MixArea";
 import { FaRedo, FaUndo } from "react-icons/fa";
 import axios from "axios";
 import { levels } from "../../data/levels";
-import { loadState } from "../../utils/storage";
+import { loadState, saveFoundCompound } from "../../utils/storage";
 
 const convertToFormula = (elements) => {
   if (!elements || elements.length === 0) {
@@ -117,15 +117,15 @@ export default function Game() {
     ]);
 
     setUndoStack([]);
-
-    // let response = await axios.get(`${import.meta.env.VITE_API_URL}/collection/find/${}`)
   };
 
   useEffect(() => {
     if (selectedElements.length === 0) return;
-    checkFormula(convertToFormula(selectedElements));
+    const formula = convertToFormula(selectedElements);
+    checkFormula(formula);
   }, [selectedElements]);
 
+  // 화합물 확인 및 저장
   const checkFormula = async (formula) => {
     if (formula.length === 0) {
       setFoundCompound(null);
@@ -142,10 +142,26 @@ export default function Game() {
       );
       if (response.data?.data) {
         if (response.data?.data?.success === false) return;
-        setFoundCompound(response.data.data?.chemical?.chemicalNameKo);
+        
+        // 화합물 데이터 생성 및 저장
+        const compoundData = response.data.data?.chemical;
+        if (compoundData?.chemicalNameKo) {
+          const foundCompoundObj = {
+            name: formula,
+            description: compoundData.chemicalNameKo || formula,
+            elements: selectedElements.map(el => el.symbol),
+            info: [compoundData.description || "화학물질 정보"],
+          };
+          
+          // localStorage에 저장
+          saveFoundCompound(foundCompoundObj);
+          
+          // 모달 표시를 위한 상태 업데이트
+          setFoundCompound(compoundData.chemicalNameKo);
+        }
       }
     } catch (e) {
-      console.error("Error fetching compound data:", e);
+      console.error("화합물 데이터 가져오기 오류:", e);
     }
   };
 
@@ -164,7 +180,7 @@ export default function Game() {
         ...data,
         x,
         y,
-        animate: true, // 새 필드
+        animate: true,
       },
     ]);
   };
@@ -178,8 +194,6 @@ export default function Game() {
     <div className={styles.container}>
       {/* 헤더 */}
       <Header />
-      {/* 모달 테스트용 */}
-      {/* <button onClick={() => setFoundCompound("H₂O")}>모달 테스트 열기</button> */}
 
       {/* 플레이 화면 */}
       <section
@@ -205,15 +219,6 @@ export default function Game() {
             </div>
           </div>
         </div>
-        {/* PlayArea를 MixArea로 변경 */}
-        {/* <PlayArea
-          selectedElements={selectedElements}
-          setSelectedElements={setSelectedElements}
-          elementRefs={elementRefs}
-          trashRef={trashRef}
-          undoStack={undoStack}
-          setUndoStack={setUndoStack}
-        /> */}
         <MixArea
           selectedElements={selectedElements}
           setSelectedElements={setSelectedElements}
@@ -227,7 +232,7 @@ export default function Game() {
         />
       </section>
 
-      {/* 모달 테스트 */}
+      {/* 화합물 발견 모달 */}
       <CompoundModal
         compound={foundCompound}
         onMove={() => navigate("/dictionary")}
