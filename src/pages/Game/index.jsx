@@ -159,7 +159,7 @@ export default function Game() {
     socketRef.current.emit("joinRoom", roomId, username);
     socketRef.current.on("roomUpdate", (room) => {
       setStatus(room.status);
-      setUsers(room.players);
+      setUsers(Object.values(room.players));
     });
     socketRef.current.on("gameStart", () => {
       setSelectedElements([]);
@@ -252,8 +252,10 @@ export default function Game() {
             <div className={styles.userStatus}>
               {status === "ready" && (
                 <span className={styles.statusText}>
-                  {Object.keys(users).length <= 1
+                  {users.length <= 1
                     ? "기다리는 중..."
+                    : users.find((e) => e.username !== username)?.ready
+                    ? "준비 완료"
                     : "준비 중..."}
                 </span>
               )}
@@ -269,6 +271,19 @@ export default function Game() {
                     onClick={() => setReady(true)}
                   >
                     준비
+                  </button>
+                </span>
+              )}
+              {status === "end" && (
+                <span className={styles.statusText}>
+                  <button
+                    className={styles.button}
+                    onClick={() => {
+                      setStatus("ready");
+                      setReady(true);
+                    }}
+                  >
+                    다시 대결
                   </button>
                 </span>
               )}
