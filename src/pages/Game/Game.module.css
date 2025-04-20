@@ -153,10 +153,10 @@
 .sliderContainer {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   max-height: 100%;
   overflow: hidden;
-  overflow-y: auto;
+  overflow-x: auto;
   width: 100%;
   gap: 16px;
   scroll-snap-type: x mandatory;
