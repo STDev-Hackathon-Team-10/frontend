@@ -84,17 +84,23 @@ export default function Game() {
     }
 
     try {
-      const username = loadState("username");
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/chemical/formula/search`,
-        { userName: username, formula }
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/collection/find/${formula}`
       );
 
       if (response.data?.data) {
         if (response.data.data.success === false && !roomId) return;
         if (!roomId)
           setFoundCompound(response.data.data.chemical?.chemicalNameKo);
-        else setAtoms((prev) => [...prev, response.data.data.chemical]);
+        else {
+          if (atoms.find((atom) => atom === formula)) return;
+          setAtoms((prev) => [...prev, response.data.data.molecularFormula]);
+          let power = await axios.get(
+            `${import.meta.env.VITE_API_URL}/chemical/attack-power/${formula}`
+          );
+          let data = power.data.data;
+          if (data) socketRef.current.emit("attack", data.attackPower);
+        }
       }
     } catch (error) {
       console.error("화학식 검색 중 오류 발생:", error);
@@ -171,6 +177,7 @@ export default function Game() {
       setPlayerElements([]);
       setUndoStack([]);
       setReady(false);
+      setAtoms([]);
       setStatus("playing");
     });
     socketRef.current.on("gameEnd", (winner) => {
